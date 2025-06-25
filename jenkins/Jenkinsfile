@@ -15,8 +15,11 @@ pipeline {
         stage('Policy Evaluation') {
             steps {
                 nexusPolicyEvaluation iqApplication: extractProjectName(), iqStage: env.GIT_BRANCH == 'main' ? 'build': 'develop',
+                    //iqScanPatterns: [
+                    //    [scanPattern: '**/*.csproj'], [scanPattern: '**/packages.config']
+                    //]
                     iqScanPatterns: [
-                        [scanPattern: '**/*.csproj'], [scanPattern: '**/packages.config']
+                        [scanPattern: '**/*.dll'], [scanPattern: '**/.exe']
                     ]
             }
         }
