@@ -12,5 +12,22 @@ pipeline {
                 sh 'dotnet test --no-build --no-restore --collect "XPlat Code Coverage"'
             }
         }
+        stage('Policy Evaluation') {
+            steps {
+                nexusPolicyEvaluation iqApplication: extractProjectName(), iqStage: env.GIT_BRANCH == 'main' ? 'build': 'develop',
+                    iqScanPatterns: [
+                        [scanPattern: '**/*.csproj'], [scanPattern: '**/packages.config']
+                    ]
+            }
+        }
     }
+}
+
+// This function extracts the project name from the GIT_URL environment variable.
+def extractProjectName() {
+    echo "Extracting project name from GIT_URL: ${env.GIT_URL}"
+    def match = env.GIT_URL =~ /.+\/([^\/]+)\.git/
+    echo "Match: ${match[0]}"
+    echo "Matched project name: ${match[0][1]}"
+    return match[0][1]
 }
